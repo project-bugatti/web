@@ -1,0 +1,35 @@
+{
+	"app_title": "GC Media",
+	"api_endpoints" : {
+		"develop" : "http://localhost:3000",
+		"prod": "https://bugatti-api.thegc.cf"
+	},
+	"default_background_color": "#E3342F",
+	"pages" : [
+		{
+			"title" : "Home",
+			"subtitle" : "View the latest uploads",
+			"route" : "/home"
+		},
+		{
+			"title" : "Upload",
+			"subtitle" : "Upload a new image or video",
+			"route" : "/upload"
+		},
+		{
+			"title" : "Quotes",
+			"subtitle" : "View quotes from the GC",
+			"route" : "/quotes"
+		},
+		{
+			"title" : "Search",
+			"subtitle" : "Find images, videos, and quotes",
+			"route" : "/search"
+		},
+		{
+			"title" : "Members",
+			"subtitle" : "View the GC members",
+			"route" : "/members"
+		}
+	]
+}
