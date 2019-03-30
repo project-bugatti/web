@@ -3,27 +3,31 @@ import SingleQuote from "./single-quote";
 import NewItemButton from "../utils/new-item-button";
 import QuoteForm from "./quote-form";
 import connect from "react-redux/es/connect/connect";
-import {getQuotesEndpoint, sendHttpGet} from "../utils/helper-functions";
+import {getQuotesEndpoint, sendHttp} from "../utils/helper-functions";
+import Loading from "../utils/loading";
 
 class Quotes extends Component {
 
   constructor() {
     super();
     this.state = {
-      quotes: [],
+      quotes: null,
       showQuoteForm: false,
     };
   }
 
   componentDidMount() {
-    this.fetchQuotes();
+    this.getQuotes();
   }
 
-  fetchQuotes = () => {
-    sendHttpGet(getQuotesEndpoint(),
-      (response) => this.setState({quotes: response}),
-      (error) => {} );
+  getQuotes = () => {
+    sendHttp('GET', getQuotesEndpoint(), null, true, (response) => {
+      this.setState({quotes: response.quotes});
+    }, (error) => {
+      console.log(error);
+    });
   };
+
 
   toggleShowQuoteForm = () => {
     this.setState({ showQuoteForm: !this.state.showQuoteForm });
@@ -32,12 +36,12 @@ class Quotes extends Component {
   newQuoteSubmittedCallback = () => {
     // hide the form and refresh quotes
     this.toggleShowQuoteForm();
-    this.fetchQuotes();
+    this.getQuotes();
   };
 
   render() {
     return (
-      <div>
+      <React.Fragment>
         <NewItemButton
           buttonTitle={"New Quote"}
           showButtonTitle={this.state.showQuoteForm}
@@ -55,15 +59,21 @@ class Quotes extends Component {
         }
 
         {
-          this.state.quotes.map( quote =>
-            <SingleQuote quote={quote} key={quote.quote_id} />
+          this.state.quotes != null ? (
+            this.state.quotes.map( quote =>
+              <SingleQuote quote={quote} key={quote.quote_id} />
+            )
+          ):(
+            <Loading/>
           )
         }
-      </div>
+      </React.Fragment>
     );
   }
 
 }
+
+
 
 const mapStateToProps = (state) => ({
   appConfigs: state.appConfigs

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {getMembersEndpoint, sendHttpGet, submitNewQuote} from '../utils/helper-functions';
-import {FaRegCheckCircle, FaRegTimesCircle, FaUpload, FaPencilAlt} from "react-icons/fa/index";
+import { FaRegCheckCircle, FaRegTimesCircle, FaUpload } from "react-icons/fa/index";
 
 class QuoteForm extends Component {
 

@@ -1,32 +1,26 @@
 import React, { Component } from 'react';
 import InitialsCircle from "./initials-circle";
-import {getMembersEndpoint, prettyPrintPhone, sendHttpGet} from '../utils/helper-functions';
+import {getMembersEndpoint, prettyPrintPhone, sendHttp} from '../utils/helper-functions';
 import {FaMobileAlt, FaChevronCircleUp, FaChevronCircleDown} from 'react-icons/fa';
 import SingleQuote from "../quotes/single-quote";
 import connect from "react-redux/es/connect/connect";
+import Loading from "../utils/loading";
 
 class MemberProfile extends Component {
 
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
-      member: {
-        quotes: []
-      },
       showQuotes: true
     }
   }
 
   componentDidMount() {
-    this.fetchMember();
-  }
-
-  fetchMember = () => {
     const memberUrl = getMembersEndpoint() + this.props.match.params.member_id;
-    sendHttpGet(memberUrl,
-      (response) => this.setState( {member: response }),
-      (error) => {});
-  };
+    sendHttp('get', memberUrl, null, true,
+      response => this.setState({member: response.member }),
+      () => console.log('error loading member profile'));
+  }
 
   handleQuotes = () => {
     const arrowStyles = "mr-2 text-teal";
@@ -61,14 +55,15 @@ class MemberProfile extends Component {
   };
 
   render() {
+    if (!this.state.member) {
+      return <Loading/>
+    }
+
     return (
-      <div>
+      <React.Fragment>
         {/* Initials Circle */}
         <div className="flex justify-center mt-4">
-          {
-            this.state.member.member_id &&
-            <InitialsCircle member={this.state.member}/>
-          }
+          <InitialsCircle member={this.state.member}/>
         </div>
 
         {/* Name */}
@@ -78,12 +73,14 @@ class MemberProfile extends Component {
 
         {/* Phone */}
         <div className="flex justify-center text-2xl mt-4">
-          <FaMobileAlt className="mr-2"/> {prettyPrintPhone(this.state.member.phone)}
+          <FaMobileAlt className="mr-2"/>
+          <p>{prettyPrintPhone(this.state.member.phone)}</p>
         </div>
 
         {/* Quotes */}
         {this.handleQuotes()}
-      </div>
+
+      </React.Fragment>
     )
   }
 

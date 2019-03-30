@@ -1,23 +1,24 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom'
 
 class SingleQuote extends Component {
-  memberName = (this.props.quote.nickname) ? this.props.quote.nickname : this.props.quote.firstname
+  memberName = (this.props.quote.nickname) ? this.props.quote.nickname : this.props.quote.firstname;
   quoteProfileLink = '/quotes/' + this.props.quote.quote_id;
 
   render() {
     return (
       <Link
+        className="no-underline"
         to={{
           pathname: this.quoteProfileLink,
           state: {
             quote: this.props.quote
           }
         }}
-        className="no-underline"
       >
         <div
-          className="flex flex-col m-2 bg-grey-lightest cursor-pointer text-xl shadow-lg rounded-lg border border-grey-light"
+          className="flex flex-col m-2 text-xl text-grey-darkest shadow rounded-lg border border-grey-light bg-white hover:bg-blue-lightest"
           onClick={ () => this.setState({ redirectToQuoteProfile: true}) }
         >
 
@@ -40,6 +41,17 @@ class SingleQuote extends Component {
 
     )
   }
+}
+
+SingleQuote.propTypes = {
+  quote_id: PropTypes.string,
+  quote_text: PropTypes.string,
+  member: PropTypes.shape({
+    member_id: PropTypes.string,
+    firstname: PropTypes.string,
+    lastname: PropTypes.string,
+    nickname: PropTypes.string
+  })
 };
 
 export default SingleQuote;

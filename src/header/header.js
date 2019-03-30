@@ -1,80 +1,56 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom'
-import connect from "react-redux/es/connect/connect";
-import { FaEquals } from "react-icons/fa";
+import {FaChevronRight, FaComment, FaRegImage, FaUser} from 'react-icons/fa';
 
-class Header extends Component {
+const Header = () => {
+  const navbarItems = [
+    {
+      route: '/',
+      title: 'media',
+      icon: <FaRegImage/>
+    },
+    {
+      route: '/quotes',
+      title: 'quotes',
+      icon: <FaComment/>
+    },
+    {
+      route: '/members',
+      title: 'members',
+      icon: <FaUser/>
+    }
+  ];
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      expandedNav: false
-    };
-  }
+  return (
+    <nav className="bg-grey-lightest">
 
-  showNavbarItems() {
-    const headerItemStyles = "block mt-4 lg:inline-block lg:mt-0 text-teal-lighter " +
-      "hover:text-white lg:mr-4 text-right text-lg";
-    return (
-      <div className="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
-        <div className="text-sm lg:flex-grow">
-          {
-            this.props.appConfigs.pages.map( (headerItem) =>
-              <Link
-                to={headerItem.route}
-                className={headerItemStyles}
-                key={headerItem.title}
-              >
-                {headerItem.title}
-              </Link>
-            )
-          }
-        </div>
+      { /* Title - The GC */ }
+      <div className="flex justify-center pt-4">
+        <Link to="/media" className="no-underline">
+          <div>
+            <span className="font-sans text-grey-darkest text-2xl font-semibold">The GC</span>
+            <span className="text-sm text-grey-dark px-0"><FaChevronRight/></span>
+          </div>
+        </Link>
       </div>
-    )
-  };
 
+      {/* Navbar Items */}
+      <div className="flex justify-center py-4">
+        {
+          navbarItems.map( (item) =>
+            <Link to={item.route} key={item.title} className="w-32 text-center text-grey-dark no-underline text-base hover:text-grey-darker">
+              <div className="flex flex-col items-center font-sans">
+                <div className="rounded-full h-8 w-8 flex items-center justify-center bg-grey text-grey-lightest mb-1">
+                  {item.icon}
+                </div>
+                <p>{item.title}</p>
+              </div>
+            </Link>
+          )
+        }
+      </div>
+    </nav>
+  )
+};
 
-  render() {
-    return (
-      <nav className="flex justify-between flex-wrap bg-teal p-6">
-
-        { /* App Title */ }
-        <div className="pin-t mt-2 mr6">
-          <Link to="/home" className="no-underline text-white font-semibold text-xl tracking-tight">
-            {this.props.appConfigs.app_title}
-          </Link>
-        </div>
-
-        <div>
-          <div className="text-right block lg:hidden">
-            <button
-              className="px-3 pt-2 pb-1 border rounded text-teal-lighter border-teal-light hover:text-white hover:border-white"
-              onClick={() => this.setState({expandedNav: !this.state.expandedNav} )}
-            >
-              <FaEquals/>
-            </button>
-          </div>
-
-          <div className="hidden lg:block">
-            {this.showNavbarItems()}
-          </div>
-
-          {
-            this.state.expandedNav &&
-            <div className="w-full block flex-grow lg:hidden">
-              {this.showNavbarItems()}
-            </div>
-          }
-        </div>
-      </nav>
-    )
-  }
-
-}
-
-const mapStateToProps = (state) => ({
-  appConfigs: state.appConfigs
-});
-
-export default connect(mapStateToProps) (Header);
+export default Header;

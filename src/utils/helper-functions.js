@@ -14,13 +14,9 @@ export function prettyPrintPhone(rawPhoneNumber) {
   }
 }
 
-export function getMembersEndpoint() {
-  return store.getState().appConfigs.bugatti_api_endpoint + '/members/';
-}
-
-export function getQuotesEndpoint() {
-  return store.getState().appConfigs.bugatti_api_endpoint + '/quotes/';
-}
+export function getMembersEndpoint() { return store.getState().appConfig.apiEndpoint + '/members/'; }
+export function getQuotesEndpoint() { return store.getState().appConfig.apiEndpoint + '/quotes/'; }
+export function getMediaEndpoint() { return store.getState().appConfig.mediaEndpoint };
 
 export function createNewMember(newMember, callback) {
   const params = {
@@ -50,4 +46,23 @@ export function sendHttpGet(url, onSuccess, onFailure) {
   axios.get(url)
     .then( (response) => onSuccess(response.data))
     .catch( (error) => onFailure(error));
+}
+
+export function sendHttp(method, url, data, useApiKey, onSuccess, onFailure) {
+  let headers = {};
+  if (useApiKey) {
+    headers = {'x-api-key': store.getState().appConfig.apiKey};
+  }
+  axios({
+    method,
+    url,
+    data,
+    headers
+  })
+    .then( response => {
+      onSuccess(response.data)
+    })
+    .catch( error => {
+      onFailure(error)
+    });
 }
