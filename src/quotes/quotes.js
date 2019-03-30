@@ -12,7 +12,7 @@ class Quotes extends Component {
     super();
     this.state = {
       quotes: null,
-      showQuoteForm: false,
+      showQuoteForm: true
     };
   }
 
@@ -50,10 +50,8 @@ class Quotes extends Component {
 
         {
           this.state.showQuoteForm &&
-          <div>
-            <QuoteForm
-              parentCallback={this.newQuoteSubmittedCallback}
-            />
+          <div className="flex justify-center">
+            <QuoteForm parentCallback={this.newQuoteSubmittedCallback} />
             <div className="my-8 bg-red"/>
           </div>
         }

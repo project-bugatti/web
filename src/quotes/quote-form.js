@@ -1,160 +1,104 @@
 import React, { Component } from 'react';
-import {getMembersEndpoint, sendHttpGet, submitNewQuote} from '../utils/helper-functions';
-import { FaRegCheckCircle, FaRegTimesCircle, FaUpload } from "react-icons/fa/index";
+import { Formik, Field } from 'formik';
+import connect from 'react-redux/es/connect/connect';
+import Loading from '../utils/loading';
+import {getMembersEndpoint, sendHttp} from '../utils/helper-functions';
+import {LOAD_MEMBERS} from '../redux-helpers/actions';
+import {sortMembers} from "../members/sort-members";
+import {MEMBERS_SORT_TYPES} from "../members/members-sort-types";
 
 class QuoteForm extends Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      members : [],
-      quote_text : '',
-      target_member_id : ''
-    };
-  }
-
   componentDidMount() {
-    if (this.props.quote) {
-      this.setState({
-        quote_text : this.props.quote.quote_text,
-        target_member_id : this.props.quote.target_member_id
-      });
+    if (this.props.members !== null) {
+      return;
     }
 
-    sendHttpGet(getMembersEndpoint(),
-      (response) => this.setState({members: response }),
-      (error) => {} );
+    sendHttp('GET', getMembersEndpoint(), null, true, (response) => {
+      const members = sortMembers(response.members, MEMBERS_SORT_TYPES.LASTNAME);
+      this.saveMembers(members);
+    })
   }
 
-  handleFormChange = (event) => {
-    const key = event.target.name;
-    const value = event.target.value;
-    this.setState({ [key]: value })
-  };
-
-  handleSubmit = () => {
-    // return if at least one required input is blank
-    for (const key in this.state) {
-      if (this.state.hasOwnProperty(key)) {
-        if (this.state[key].length === 0) {
-          return;
-        }
-      }
-    }
-
-    const newQuoteRequest = {
-      target_member_id: this.state.target_member_id,
-      quote_text: this.state.quote_text
-    };
-
-    submitNewQuote(newQuoteRequest, (postResponse) => {
-      // use callback to close form
-      this.props.parentCallback();
+  saveMembers = (members) => {
+    this.props.dispatch({
+      type: LOAD_MEMBERS,
+      members
     });
-
-  };
-
-  showIcons = (key) => {
-    if (this.state[key].length >= 1) {
-      return (
-        <div className="ml-2 mt-3 text-3xl text-green-dark">
-          <FaRegCheckCircle/>
-        </div>
-      )
-    }
-    return (
-      <div className="ml-2 mt-3 text-3xl text-red">
-        <FaRegTimesCircle/>
-      </div>
-    )
-
   };
 
   render() {
-    const FORM_INPUT_STYLES = "block appearance-none w-full border " +
-      "border-grey-lighter text-grey-darker py-3 px-4 pr-8 bg-grey-lightest shadow-md border rounded leading-tight " +
-      "focus:outline-none focus:shadow-outline focus:bg-white focus:border-grey";
+
+    if (this.props.members == null) {
+      return <Loading/>
+    }
 
     return(
-      <div className="flex justify-center m-2">
-        <div className="w-full max-w-sm shadow rounded-lg text-grey-darkest bg-teal-lightest">
-          <form>
+      <div className="flex flex-grow max-w-xs md:max-w-md border border-purple rounded-lg">
 
-            {/* If a quote prop was passed in, that means the form is used for editing an existing quote
-             So, only display the picker for a quote's author when creating a quote, not editing one */}
-            {
-              !this.props.quote &&
-              <div className="px-4 mt-4 mb-8">
-                <p className="ml-2 mb-2 font-bold">Who said it?</p>
-
-                <div className="flex">
-                  <select
-                    name="target_member_id"
-                    onChange={this.handleFormChange}
-                    className={FORM_INPUT_STYLES}
-                    defaultValue={"Choose a member"}
-                  >
-                    <option disabled>Choose a member</option>
-                    {
-                      this.state.members.map( member =>
-                        <option
-                          value={member.member_id}
-                          key={member.member_id}
-                        >{member.firstname} {member.lastname}</option>
-                      )
-                    }
-                  </select>
-                  {this.showIcons("target_member_id")}
-                </div>
-              </div>
+        <Formik
+          initialValues={{ member_id: null, quote_text: '' }}
+          validate={values => {
+            let errors = {};
+            if (!values.member) {
+              errors.member = 'Required';
             }
+            if (!values.quote_text) {
+              errors.quote_text = 'Required';
+            }
+            return errors;
+          }}
+          onSubmit={(values, { setSubmitting }) => {
+            setTimeout(() => {
+              alert(JSON.stringify(values, null, 2));
+              setSubmitting(false);
+            }, 500);
+          }}
+        >
+          {props => {
+            const {
+              values,
+              touched,
+              errors,
+              dirty,
+              isSubmitting,
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              handleReset,
+            } = props;
+            return (
+              <form onSubmit={handleSubmit}>
 
-            {/* Quote text */}
-            <div className="px-4 mt-4">
-              <p className="mb-2 font-bold">What{"'"}s the quote?</p>
+                <label htmlFor="member" className="flex">
+                  Who said it?
+                </label>
+                <Field component="select" name="member">
+                  <option>Choose a member</option>
+                  {
+                    this.props.members.map( (member) =>
+                      <option value={member.member_id} key={member.member_id}>{member.firstname} {member.lastname}</option>
+                    )
+                  }
+                </Field>
 
-              <div className="flex">
-            <textarea
-              name="quote_text"
-              onChange={this.handleFormChange}
-              className={FORM_INPUT_STYLES}
-              type="text"
-              value={this.state.quote_text}
-            />
+                {errors.member && touched.quote_text && errors.quote_text}
+                <button type="submit" disabled={isSubmitting}>
+                  Submit
+                </button>
 
-                {this.showIcons("quote_text")}
-              </div>
-            </div>
-
-            {/* Submit button for a new quote*/}
-            <div className="flex justify-center mt-4">
-              <button
-                type="button"
-                className="p-3 m-4 bg-white font-bold text-teal-dark shadow-md rounded-lg"
-                onClick={this.handleSubmit}
-              >
-
-                {
-                  !this.props.quote ? (
-                    <div>
-                      <FaUpload/> Submit New Quote
-                    </div>
-                  ) : (
-                    <div>
-                      <FaUpload/> Edit Quote
-                    </div>
-                  )
-                }
-              </button>
-            </div>
-
-          </form>
-        </div>
+              </form>
+            );
+          }}
+        </Formik>
       </div>
+
     )
   }
-};
+}
 
+const mapStateToProps = (state) => ({
+  members: state.members
+});
 
-
-export default QuoteForm;
+export default connect(mapStateToProps) (QuoteForm);

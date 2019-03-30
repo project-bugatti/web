@@ -1,5 +1,5 @@
-import axios from "axios";
-import store from "../redux-helpers/store";
+import axios from 'axios';
+import store from '../redux-helpers/store';
 
 export function prettyPrintPhone(rawPhoneNumber) {
   const cleaned = ('' + rawPhoneNumber).replace(/\D/g, '');
