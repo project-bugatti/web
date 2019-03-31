@@ -7,12 +7,12 @@ const NewItemButton = (props) => {
   return (
     <div className="flex">
       <button
-        className="flex-grow m-2 py-2 border border-teal-lighter bg-teal-lightest rounded-lg shadow"
+        className="flex-grow m-2 py-2 border border-purple-lighter hover:border-purple-light rounded-lg shadow focus:outline-none"
         onClick={ () => props.parentCallback() }>
 
         <div className="flex justify-center items-center">
           {/* Show/hide icon */}
-          <div className="mt-1 text-teal text-center text-3xl ">
+          <div className="mt-1 text-purple text-center text-3xl ">
             {
               props.showButtonTitle ? (
                 <FaMinusCircle/>

@@ -45,24 +45,6 @@ class QuoteProfile extends Component {
           <p className="m-2 text-grey-darkest text-xl">
             {this.state.quote.quote_text}
           </p>
-
-          <NewItemButton
-            buttonTitle={"Edit Quote"}
-            parentCallback={this.toggleShowQuoteForm}
-            showButtonTitle={this.state.showQuoteForm}
-
-          />
-
-          {/* Edit quote form */}
-          {
-            this.state.showQuoteForm &&
-            <QuoteForm
-              quote={this.state.quote}
-              parentCallback={this.quoteEditedCallback}
-            />
-          }
-
-
         </div>
       )
     }

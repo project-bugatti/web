@@ -12,7 +12,7 @@ class Quotes extends Component {
     super();
     this.state = {
       quotes: null,
-      showQuoteForm: true
+      showQuoteForm: false
     };
   }
 
@@ -42,6 +42,8 @@ class Quotes extends Component {
   render() {
     return (
       <React.Fragment>
+
+        {/* New quote button */}
         <NewItemButton
           buttonTitle={"New Quote"}
           showButtonTitle={this.state.showQuoteForm}
