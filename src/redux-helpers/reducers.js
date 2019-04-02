@@ -1,4 +1,8 @@
-import { LOAD_CONFIG, LOAD_MEMBERS, SET_MEMBERS_SORT_TYPE } from './actions';
+import {
+  LOAD_CONFIG,
+  LOAD_MEMBERS,
+  SET_MEMBERS_SORT_TYPE
+} from './actions';
 
 function reducers(state = {}, action) {
 

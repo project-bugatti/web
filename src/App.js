@@ -10,18 +10,25 @@ import MemberProfile from './members/member-profile';
 import Quotes from './quotes/quotes';
 import QuoteProfile from './quotes/quote-profile';
 import Header from "./header/header";
+import Auth from './auth/auth';
+import Guest from "./auth/guest";
+import Loading from "./utils/loading";
+import PrivateRoute from './auth/private-route';
+
+const auth = new Auth();
+
+const handleAuthentication = ({location}) => {
+  if (/access_token|id_token|error/.test(location.hash)) {
+    auth.handleAuthentication();
+  }
+};
 
 class App extends Component {
 
   componentDidMount() {
     let apiEndpoint, apiKey, mediaEndpoint;
-    if (process.env.NODE_ENV === "development") {
-      apiEndpoint = process.env.REACT_APP_API_ENDPOINT_DEV;
-      apiKey = process.env.REACT_APP_API_KEY_DEV;
-    } else {
-      apiEndpoint = process.env.REACT_APP_API_ENDPOINT_PROD;
-      apiKey = process.env.REACT_APP_API_KEY_PROD;
-    }
+    apiEndpoint = process.env.REACT_APP_API_ENDPOINT_DEV;
+    apiKey = process.env.REACT_APP_API_KEY_DEV;
     mediaEndpoint = process.env.REACT_APP_MEDIA_ENDPOINT;
     const appConfig = { apiEndpoint, apiKey, mediaEndpoint };
     this.props.dispatch({
@@ -31,32 +38,35 @@ class App extends Component {
   }
 
   render() {
-    if (this.props.appConfig) {
-      return (
-        <Router history={history}>
-          <div>
-            <Header/>
-            <Switch>
-              <Route exact path="/" component={Media} />
-              <Route path="/quotes/:quote_id" component={QuoteProfile} />
-              <Route path="/quotes" component={Quotes} />
-              <Route path="/members/:member_id" component={MemberProfile} />
-              <Route path="/members" component={Members} />
-            </Switch>
-          </div>
-        </Router>
-      );
+    if (!this.props.appConfig) {
+      return <Loading/>
     }
+
     return (
-      <div>
-        <Callback/>
-      </div>
-    )
+      <Router history={history}>
+        <React.Fragment>
+          <Header auth={auth}/>
+          <Switch>
+            <PrivateRoute exact path="/" component={Media} auth={auth}/>
+            <PrivateRoute path="/quotes/:quote_id" component={QuoteProfile} auth={auth}/>
+            <PrivateRoute path="/quotes" component={Quotes} auth={auth}/>
+            <PrivateRoute path="/members/:member_id" component={MemberProfile} auth={auth}/>
+            <PrivateRoute path="/members" component={Members} auth={auth}/>
+            <Route path="/callback" render={(props) => {
+              handleAuthentication(props);
+              return <Callback {...props} />
+            }}/>
+            <Route path="/guest" render={(props) => <Guest auth={auth} {...props} />} />
+          </Switch>
+        </React.Fragment>
+      </Router>
+    );
   }
 }
 
 const mapStateToProps = (state) => ({
-  appConfig: state.appConfig
+  appConfig: state.appConfig,
+  redirectRoute: state.redirectRoute
 });
 
 export default connect(mapStateToProps) (App);

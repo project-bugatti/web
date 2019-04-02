@@ -1,15 +1,13 @@
-// src/Auth/Auth.js
-
 import history from '../utils/history';
-
 import auth0 from 'auth0-js';
+import { REDIRECT_ROUTE } from "./redirect-route";
 
 export default class Auth {
 
   auth0 = new auth0.WebAuth({
     domain: 'gcmedia.auth0.com',
-    clientID: 'H2FoY19W39tr5OUyz04S0E0YGlg6m7xn',
-    redirectUri: 'http://localhost:3001/callback',
+    clientID: process.env.REACT_APP_AUTH0_CLIENT_ID,
+    redirectUri: 'http://localhost:3000/callback',
     responseType: 'token id_token',
     scope: 'openid'
   });
@@ -33,7 +31,7 @@ export default class Auth {
       if (authResult && authResult.accessToken && authResult.idToken) {
         this.setSession(authResult);
       } else if (err) {
-        history.replace('/home');
+        history.replace('/');
         console.log(err);
         alert(`Error: ${err.error}. Check the console for further details.`);
       }
@@ -58,8 +56,8 @@ export default class Auth {
     this.idToken = authResult.idToken;
     this.expiresAt = expiresAt;
 
-    // navigate to the home route
-    history.replace('/home');
+    // navigate to the redirect route or home route
+    history.replace(localStorage.getItem(REDIRECT_ROUTE) || '/');
   }
 
   renewSession() {
@@ -83,8 +81,8 @@ export default class Auth {
     // Remove isLoggedIn flag from localStorage
     localStorage.removeItem('isLoggedIn');
 
-    // navigate to the home route
-    history.replace('/home');
+    // navigate to the guest route
+    history.replace('/guest');
   }
 
   isAuthenticated() {

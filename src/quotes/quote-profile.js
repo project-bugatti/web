@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {getQuotesEndpoint, sendHttpGet} from "../utils/helper-functions";
 import Callback from "../callback/callback";
-import QuoteForm from "./quote-form";
-import NewItemButton from "../utils/new-item-button";
+// import QuoteForm from "./quote-form";
+// import NewItemButton from "../utils/new-item-button";
 
 class QuoteProfile extends Component {
 

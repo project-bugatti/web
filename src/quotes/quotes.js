@@ -6,18 +6,71 @@ import connect from "react-redux/es/connect/connect";
 import {getQuotesEndpoint, sendHttp} from "../utils/helper-functions";
 import Loading from "../utils/loading";
 
+const myQuotes =  [
+  {
+    quote_id: "f8f694f0-5405-11e9-825c-d3ab363732c1",
+    quote_text: "Fulfilled direction use continual set him propriety continued. Saw met applauded favourite deficient engrossed concealed and her. Concluded boy perpetual old supposing. Farther related bed and passage comfort civilly.",
+    member: {
+      member_id: "e2292d46-3d12-11e9-b210-d663bd873d93",
+      firstname: "Bob",
+      lastname: "Raus",
+      nickname: null
+    }
+  },
+  {
+    quote_id: "f8f694f0-5405-11e9-825c-d3ab363732c2",
+    quote_text: "Placing forming nay looking old married few has. Margaret disposed add screened rendered six say his striking confined. ",
+    member: {
+      member_id: "e2292d46-3d12-11e9-b210-d663bd873d93",
+      firstname: "Bob",
+      lastname: "Raus",
+      nickname: null
+    }
+  },
+  {
+    quote_id: "f8f694f0-5405-11e9-825c-d3ab363732c3",
+    quote_text: "Let's get it",
+    member: {
+      member_id: "e2292d46-3d12-11e9-b210-d663bd873d93",
+      firstname: "Bob",
+      lastname: "Raus",
+      nickname: null
+    }
+  },
+  {
+    quote_id: "f8f694f0-5405-11e9-825c-d3ab363732c4",
+    quote_text: "Doubtful on an juvenile as of servants insisted. Judge why maids led sir whose guest drift her point. Him comparison especially friendship was who sufficient attachment favourable how.",
+    member: {
+      member_id: "e2292d46-3d12-11e9-b210-d663bd873d93",
+      firstname: "Bob",
+      lastname: "Raus",
+      nickname: null
+    }
+  },
+  {
+    quote_id: "f8f694f0-5405-11e9-825c-d3ab363732c5",
+    quote_text: "Neat own nor she said see walk. And charm add green you these. Sang busy in this drew ye fine.",
+    member: {
+      member_id: "e2292d46-3d12-11e9-b210-d663bd873d93",
+      firstname: "Bob",
+      lastname: "Raus",
+      nickname: null
+    }
+  }
+];
+
 class Quotes extends Component {
 
   constructor() {
     super();
     this.state = {
-      quotes: null,
+      quotes: myQuotes,
       showQuoteForm: false
     };
   }
 
   componentDidMount() {
-    this.getQuotes();
+    // this.getQuotes();
   }
 
   getQuotes = () => {
@@ -60,9 +113,13 @@ class Quotes extends Component {
 
         {
           this.state.quotes != null ? (
-            this.state.quotes.map( quote =>
-              <SingleQuote quote={quote} key={quote.quote_id} />
-            )
+            <div className="flex flex-wrap">
+              {
+                this.state.quotes.map( quote =>
+                  <SingleQuote quote={quote} key={quote.quote_id} />
+                )
+              }
+            </div>
           ):(
             <Loading/>
           )

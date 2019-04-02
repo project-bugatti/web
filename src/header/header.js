@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom'
 import {FaChevronRight, FaComment, FaRegImage, FaUser} from 'react-icons/fa';
 
-const Header = () => {
+const Header = (props) => {
   const navbarItems = [
     {
       route: '/',
@@ -18,7 +18,7 @@ const Header = () => {
       route: '/members',
       title: 'members',
       icon: <FaUser/>
-    }
+    },
   ];
 
   return (
@@ -26,7 +26,7 @@ const Header = () => {
 
       { /* Title - The GC */ }
       <div className="flex justify-center pt-4">
-        <Link to="/media" className="no-underline">
+        <Link to="/" className="no-underline">
           <div>
             <span className="font-sans text-grey-darkest text-2xl font-semibold">The GC</span>
             <span className="text-sm text-grey-dark px-0"><FaChevronRight/></span>
