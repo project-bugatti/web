@@ -15,17 +15,20 @@ pipeline {
     stage('Load Config') {
       steps {
         load "$JENKINS_HOME/config/web.groovy"
+        echo "$env.REACT_APP_API_ENDPOINT"
       }
     }
 
     stage('Build') {
       steps {
+        echo "$env.REACT_APP_API_ENDPOINT"
         sh 'npm install'
       }
     }
 
     stage('Test') {
       steps {
+        echo "$env.REACT_APP_API_ENDPOINT"
         sh './jenkins/scripts/test.sh'
       }
     }
