@@ -17,7 +17,6 @@ pipeline {
         echo "BRANCH_NAME is ${env.BRANCH_NAME}"
         echo "JOB/PROJECT NAME is ${env.JOB_NAME}"
         load "$JENKINS_HOME/config/web.groovy"
-        return
       }
     }
 
