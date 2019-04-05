@@ -45,7 +45,7 @@ pipeline {
       parallel {
         stage('Dev') {
           when {
-            branch 'dev'
+            branch '*/dev'
           }
           steps {
             withAWS(region: 'us-east-1', credentials: 'tgalske-AWS-creds') {
@@ -55,7 +55,7 @@ pipeline {
         }
         stage('Production') {
           when {
-            branch 'master'
+            branch '*/master'
           }
           steps {
             withAWS(region: 'us-east-1', credentials: 'tgalske-AWS-creds') {
