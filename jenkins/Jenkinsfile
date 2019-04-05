@@ -8,28 +8,27 @@ pipeline {
 
   environment {
     CI = 'true'
-
   }
+
   stages {
 
     stage('Load Config') {
       steps {
         echo "BRANCH_NAME is ${env.BRANCH_NAME}"
+        echo "JOB/PROJECT NAME is ${env.JOB_NAME}"
         load "$JENKINS_HOME/config/web.groovy"
-        echo "$env.REACT_APP_API_ENDPOINT"
+        return
       }
     }
 
     stage('Build') {
       steps {
-        echo "$env.REACT_APP_API_ENDPOINT"
         sh 'npm install'
       }
     }
 
     stage('Test') {
       steps {
-        echo "$env.REACT_APP_API_ENDPOINT"
         sh './jenkins/scripts/test.sh'
       }
     }
@@ -50,17 +49,25 @@ pipeline {
           }
           steps {
             withAWS(region: 'us-east-1', credentials: 'tgalske-AWS-creds') {
-              s3Upload(bucket: 'dev.thegc.cf', workingDir: '/var/jenkins_home/workspace/web/build', includePathPattern:'**/*');
+              s3Upload(
+                bucket: 'dev.thegc.cf',
+                workingDir: '/var/jenkins_home/workspace/web/build',
+                includePathPattern:'**/*'
+              );
             }
           }
         }
-        stage('Production') {
+        stage('Prod') {
           when {
             branch 'master'
           }
           steps {
             withAWS(region: 'us-east-1', credentials: 'tgalske-AWS-creds') {
-              s3Upload(bucket: 'thegc.cf', workingDir: '/var/jenkins_home/workspace/web/build', includePathPattern:'**/*');
+              s3Upload(
+                bucket: 'thegc.cf',
+                workingDir: '/var/jenkins_home/workspace/web/build',
+                includePathPattern:'**/*'
+              );
             }
           }
         }
