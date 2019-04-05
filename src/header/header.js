@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom'
 import {FaChevronRight, FaComment, FaRegImage, FaUser} from 'react-icons/fa';
 
-const Header = (props) => {
+const Header = () => {
   const navbarItems = [
     {
       route: '/',

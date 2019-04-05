@@ -26,10 +26,9 @@ const handleAuthentication = ({location}) => {
 class App extends Component {
 
   componentDidMount() {
-    let apiEndpoint, apiKey, mediaEndpoint;
-    apiEndpoint = process.env.REACT_APP_API_ENDPOINT_DEV;
-    apiKey = process.env.REACT_APP_API_KEY_DEV;
-    mediaEndpoint = process.env.REACT_APP_MEDIA_ENDPOINT;
+    const apiEndpoint = process.env.REACT_APP_API_ENDPOINT;
+    const apiKey = process.env.REACT_APP_API_KEY;
+    const mediaEndpoint = process.env.REACT_APP_MEDIA_ENDPOINT;
     const appConfig = { apiEndpoint, apiKey, mediaEndpoint };
     this.props.dispatch({
       type: LOAD_CONFIG,
@@ -65,8 +64,7 @@ class App extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  appConfig: state.appConfig,
-  redirectRoute: state.redirectRoute
+  appConfig: state.appConfig
 });
 
 export default connect(mapStateToProps) (App);
