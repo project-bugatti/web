@@ -3,7 +3,7 @@ import InitialsCircle from "./initials-circle";
 import {getMembersEndpoint, prettyPrintPhone, sendHttp} from '../utils/helper-functions';
 import {FaMobileAlt, FaChevronCircleUp, FaChevronCircleDown} from 'react-icons/fa';
 import SingleQuote from "../quotes/single-quote";
-import connect from "react-redux/es/connect/connect";
+import { connect } from 'react-redux'
 import Loading from "../utils/loading";
 
 class MemberProfile extends Component {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Formik, Field } from 'formik';
-import connect from 'react-redux/es/connect/connect';
+import { connect } from 'react-redux'
 import {getMembersEndpoint, getQuotesEndpoint, sendHttp} from '../utils/helper-functions';
 import {LOAD_MEMBERS} from '../redux-helpers/actions';
 import {sortMembers} from '../members/sort-members';

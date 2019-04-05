@@ -5,7 +5,7 @@ import store from "./redux-helpers/store";
 import {Provider} from "react-redux";
 import App from './App';
 import React from 'react';
-require('dotenv').config(); // dotenv package
+require('dotenv').config();
 
 ReactDOM.render(
   <Provider store={store}>

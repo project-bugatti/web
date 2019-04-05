@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Route, Router, Switch } from 'react-router-dom';
-import connect from "react-redux/es/connect/connect";
+import { connect } from 'react-redux';
 import { LOAD_CONFIG } from './redux-helpers/actions';
 import Callback from "./callback/callback";
 import history from './utils/history';

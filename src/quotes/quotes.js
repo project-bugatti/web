@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import SingleQuote from "./single-quote";
 import NewItemButton from "../utils/new-item-button";
 import QuoteForm from "./quote-form";
-import connect from "react-redux/es/connect/connect";
+import { connect } from 'react-redux'
 import {getQuotesEndpoint, sendHttp} from "../utils/helper-functions";
 import Loading from "../utils/loading";
 
