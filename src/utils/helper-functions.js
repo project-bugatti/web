@@ -16,7 +16,8 @@ export function prettyPrintPhone(rawPhoneNumber) {
 
 export function getMembersEndpoint() { return store.getState().appConfig.apiEndpoint + '/members/'; }
 export function getQuotesEndpoint() { return store.getState().appConfig.apiEndpoint + '/quotes/'; }
-export function getMediaEndpoint() { return store.getState().appConfig.mediaEndpoint };
+export function getSessionEndpoint() { return store.getState().appConfig.apiEndpoint + '/session/' }
+export function getMediaEndpoint() { return store.getState().appConfig.mediaEndpoint }
 
 export function createNewMember(newMember, callback) {
   const params = {

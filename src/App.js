@@ -23,6 +23,7 @@ const handleAuthentication = ({location}) => {
   }
 };
 
+
 class App extends Component {
 
   componentDidMount() {
