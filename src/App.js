@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Route, Router, Switch } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { LOAD_CONFIG } from './redux-helpers/actions';
 import Callback from "./callback/callback";
 import history from './utils/history';
 import Media from './media/media';
@@ -12,7 +11,6 @@ import QuoteProfile from './quotes/quote-profile';
 import Header from "./header/header";
 import Auth from './auth/auth';
 import Guest from "./auth/guest";
-import Loading from "./utils/loading";
 import PrivateRoute from './auth/private-route';
 
 const auth = new Auth();
@@ -26,21 +24,7 @@ const handleAuthentication = ({location}) => {
 
 class App extends Component {
 
-  componentDidMount() {
-    const apiEndpoint = process.env.REACT_APP_API_ENDPOINT;
-    const apiKey = process.env.REACT_APP_API_KEY;
-    const mediaEndpoint = process.env.REACT_APP_MEDIA_ENDPOINT;
-    const appConfig = { apiEndpoint, apiKey, mediaEndpoint };
-    this.props.dispatch({
-      type: LOAD_CONFIG,
-      appConfig
-    });
-  }
-
   render() {
-    if (!this.props.appConfig) {
-      return <Loading/>
-    }
 
     return (
       <Router history={history}>
@@ -49,9 +33,9 @@ class App extends Component {
           <Switch>
             <PrivateRoute exact path="/" component={Media} auth={auth}/>
             <PrivateRoute path="/quotes/:quote_id" component={QuoteProfile} auth={auth}/>
-            <PrivateRoute path="/quotes" component={Quotes} auth={auth}/>
+            <PrivateRoute exact path="/quotes" component={Quotes} auth={auth}/>
             <PrivateRoute path="/members/:member_id" component={MemberProfile} auth={auth}/>
-            <PrivateRoute path="/members" component={Members} auth={auth}/>
+            <PrivateRoute exact path="/members" component={Members} auth={auth}/>
             <Route path="/callback" render={(props) => {
               handleAuthentication(props);
               return <Callback {...props} />

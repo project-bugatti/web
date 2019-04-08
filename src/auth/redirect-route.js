@@ -1,1 +1,0 @@
-export const REDIRECT_ROUTE = 'REDIRECT_ROUTE';

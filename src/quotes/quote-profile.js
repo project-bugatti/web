@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {getQuotesEndpoint, sendHttpGet} from "../utils/helper-functions";
+// import {getQuotesEndpoint} from "../utils/helper-functions";
 import Callback from "../callback/callback";
 // import QuoteForm from "./quote-form";
 // import NewItemButton from "../utils/new-item-button";
@@ -19,11 +19,9 @@ class QuoteProfile extends Component {
     // if quote was not passed down through props, send an HTTP using the parameter
 
     if (this.props.location.state === undefined) {
-      const quote_id = this.props.match.params.quote_id;
-      const quote_endpoint = getQuotesEndpoint() + quote_id;
-      sendHttpGet(quote_endpoint,
-        (response) => this.setState({quote: response}),
-        (error) => console.log(error));
+      // const quote_id = this.props.match.params.quote_id;
+      // const quote_endpoint = getQuotesEndpoint() + quote_id;
+      // send http request here
     } else {
       this.setState({quote : this.props.location.state.quote })
     }

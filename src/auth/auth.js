@@ -1,21 +1,19 @@
 import history from '../utils/history';
 import auth0 from 'auth0-js';
-import { REDIRECT_ROUTE } from "./redirect-route";
+import { REDIRECT_ROUTE } from '../utils/local-storage-keys';
 import Cookies from 'universal-cookie';
-import {sendHttp, getSessionEndpoint } from "../utils/helper-functions";
+import {sendHttp, getSessionEndpoint } from '../utils/helper-functions';
+import appConfig from '../app-config';
 
 class Auth {
 
-  SESSION_ID_KEY = 'session_id';
-  clientID = process.env.REACT_APP_AUTH0_CLIENT_ID;
-  redirectUri = process.env.REACT_APP_AUTH0_CALLBACK;
-
   auth0 = new auth0.WebAuth({
-    domain: 'gcmedia.auth0.com',
-    clientID: this.clientID,
-    redirectUri: this.redirectUri,
-    responseType: 'token id_token',
-    scope: 'openid'
+    domain: appConfig.auth0.domain,
+    clientID: appConfig.auth0.clientId,
+    audience: appConfig.auth0.audience,
+    redirectUri: appConfig.auth0.redirectUri,
+    responseType: appConfig.auth0.responseType,
+    scope: appConfig.auth0.scope
   });
 
   login = () => {
@@ -50,15 +48,23 @@ class Auth {
     this.idToken = authResult.idToken;
     this.expiresAt = expiresAt;
 
+    console.log(authResult);
+
     this.setLocalSession();
 
     // navigate to the redirect route or home route
     history.replace(localStorage.getItem(REDIRECT_ROUTE) || '/');
   };
 
+  /*
+    Saves the access token and relevant user information to the database
+    On a successful insert, a session ID is returned
+    Saves the session ID in local storage for future vists
+   */
   setLocalSession = () => {
     const body = {
-      token: this.idToken
+      access_token: this.accessToken
+
     };
     sendHttp('POST', getSessionEndpoint(), body, true, (response) => {
       console.log('response', response);
