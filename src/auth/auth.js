@@ -19,6 +19,8 @@ class Auth {
     scope: appConfig.auth0.scope
   });
 
+  tokenRenewalTimeout;
+
   login = () => {
     this.auth0.authorize();
   };
@@ -27,6 +29,7 @@ class Auth {
     this.auth0.parseHash((err, authResult) => {
       if (authResult && authResult.accessToken && authResult.idToken) {
         this.setSession(authResult);
+        this.createSessionId();
       } else if (err) {
         history.replace('/');
         console.log(err);
@@ -35,74 +38,56 @@ class Auth {
     });
   };
 
-  getAccessToken = () => { return this.accessToken };
-
-  getIdToken() {
-    return this.idToken;
-  }
-
   setSession = (authResult) => {
-    // Set isLoggedIn flag in localStorage
-    localStorage.setItem('isLoggedIn', 'true');
-
+    console.log('set session', authResult);
     // Set the time that the access token will expire at
     let expiresAt = (authResult.expiresIn * 1000) + new Date().getTime();
     this.accessToken = authResult.accessToken;
     this.idToken = authResult.idToken;
     this.expiresAt = expiresAt;
 
-    console.log(authResult);
-
-    // Saves the access token and expiration time to Dynamo
-    // On a successful insert, a session ID is returned, which is saved locally using a secure cookie
-    const body = {
-      access_token: this.accessToken
-    };
-    sendHttp('POST', getSessionEndpoint(), body, true, (response) => {
-      const session_id = response.session.session_id;
-      new Cookies().set(COOKIE_SESSION_ID_KEY, session_id, {path: '/', secure: true, httpOnly: false});
-    }, (error) => {
-      console.log(error);
-    });
+    this.scheduleRenewal();
 
     // navigate to the redirect route or home route
     history.replace(localStorage.getItem(REDIRECT_ROUTE) || '/');
   };
 
-
-  saveToPersistentStorage(access_token, expires_at) {
+  createSessionId = () => {
     const body = {
-      access_token,
-      expires_at
+      access_token: this.accessToken,
+      id_token: this.idToken,
+      expires_at: this.expiresAt.toString()
     };
+
     sendHttp('POST', getSessionEndpoint(), body, true, (response) => {
       const session_id = response.session.session_id;
-      this.saveSessionLocally(session_id);
-    })
-  }
-
-  saveSessionLocally(session_id) {
-    const cookie = new Cookies();
-    cookie.remove(COOKIE_SESSION_ID_KEY); // clear session cookie if one exists
-    cookie.set(COOKIE_SESSION_ID_KEY, session_id, {path: '/', secure: true, httpOnly: false});
-  }
-
-  getSessionId = () => {
-    return new Cookies().get(COOKIE_SESSION_ID_KEY);
+      const cookie = new Cookies();
+      cookie.remove(COOKIE_SESSION_ID_KEY);
+      cookie.set(COOKIE_SESSION_ID_KEY, session_id, {path: '/', secure: true, httpOnly: false});
+    }, (error) => {
+      console.log(error);
+    });
   };
 
-  getToken = () => {
-    const session_id = this.getSessionId();
-    if (!session_id) {
+  reinitSession = () => {
+    const cookie = new Cookies();
+    const session_id = cookie.get(COOKIE_SESSION_ID_KEY);
+    if (session_id == null) {
       return;
     }
 
     sendHttp('GET', getSessionEndpoint() + session_id, null, true, (response) => {
-      console.log('response', response);
-      return response.session.token;
+      console.log('reinit response', response);
+      const authResult = {
+        accessToken: response.session.access_token,
+        idToken: response.session.id_token,
+        expiresIn: response.session.expires_at - new Date().getTime(),
+      };
+
+      this.setSession(authResult);
+
     }, (error) => {
-      console.log('Error retrieving token', error);
-      return;
+      console.log(error);
     })
   };
 
@@ -118,14 +103,25 @@ class Auth {
     });
   };
 
+  scheduleRenewal() {
+    let expiresAt = this.expiresAt;
+    const timeout = expiresAt - Date.now();
+    if (timeout > 0) {
+      this.tokenRenewalTimeout = setTimeout(() => {
+        this.renewSession();
+      }, timeout);
+    }
+  }
+
   logout = () => {
     // Remove tokens and expiry time
     this.accessToken = null;
     this.idToken = null;
     this.expiresAt = 0;
 
-    // Remove isLoggedIn flag from localStorage
-    localStorage.removeItem('isLoggedIn');
+    clearTimeout(this.tokenRenewalTimeout);
+
+    new Cookies().remove(COOKIE_SESSION_ID_KEY);
 
     // navigate to the guest route
     history.replace('/guest');
