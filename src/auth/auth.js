@@ -5,6 +5,9 @@ import Cookies from 'universal-cookie';
 import {sendHttp, getSessionEndpoint } from '../utils/helper-functions';
 import appConfig from '../app-config';
 
+// The key of the cookie that stores the session ID
+const COOKIE_SESSION_ID_KEY = 'session_id';
+
 class Auth {
 
   auth0 = new auth0.WebAuth({
@@ -50,45 +53,55 @@ class Auth {
 
     console.log(authResult);
 
-    this.setLocalSession();
+    // Saves the access token and expiration time to Dynamo
+    // On a successful insert, a session ID is returned, which is saved locally using a secure cookie
+    const body = {
+      access_token: this.accessToken
+    };
+    sendHttp('POST', getSessionEndpoint(), body, true, (response) => {
+      const session_id = response.session.session_id;
+      new Cookies().set(COOKIE_SESSION_ID_KEY, session_id, {path: '/', secure: true, httpOnly: false});
+    }, (error) => {
+      console.log(error);
+    });
 
     // navigate to the redirect route or home route
     history.replace(localStorage.getItem(REDIRECT_ROUTE) || '/');
   };
 
-  /*
-    Saves the access token and relevant user information to the database
-    On a successful insert, a session ID is returned
-    Saves the session ID in local storage for future vists
-   */
-  setLocalSession = () => {
-    const body = {
-      access_token: this.accessToken
 
+  saveToPersistentStorage(access_token, expires_at) {
+    const body = {
+      access_token,
+      expires_at
     };
     sendHttp('POST', getSessionEndpoint(), body, true, (response) => {
-      console.log('response', response);
       const session_id = response.session.session_id;
-
-      const cookies = new Cookies();
-      cookies.set(this.SESSION_ID_KEY, session_id, {path: '/', secure: true, httpOnly: true});
+      this.saveSessionLocally(session_id);
     })
-  };
+  }
+
+  saveSessionLocally(session_id) {
+    const cookie = new Cookies();
+    cookie.remove(COOKIE_SESSION_ID_KEY); // clear session cookie if one exists
+    cookie.set(COOKIE_SESSION_ID_KEY, session_id, {path: '/', secure: true, httpOnly: false});
+  }
 
   getSessionId = () => {
-    return new Cookies().get(this.SESSION_ID_KEY);
+    return new Cookies().get(COOKIE_SESSION_ID_KEY);
   };
 
   getToken = () => {
-    const session_id = this.getSessionId;
+    const session_id = this.getSessionId();
     if (!session_id) {
       return;
     }
-    sendHttp('GET', getSessionEndpoint() +'/' + session_id, null, true, (response) => {
+
+    sendHttp('GET', getSessionEndpoint() + session_id, null, true, (response) => {
       console.log('response', response);
       return response.session.token;
     }, (error) => {
-      console.log('error', error);
+      console.log('Error retrieving token', error);
       return;
     })
   };

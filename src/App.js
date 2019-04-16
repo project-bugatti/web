@@ -12,6 +12,7 @@ import Header from "./header/header";
 import Auth from './auth/auth';
 import Guest from "./auth/guest";
 import PrivateRoute from './auth/private-route';
+import Cookies from 'universal-cookie';
 
 const auth = new Auth();
 
@@ -21,11 +22,19 @@ const handleAuthentication = ({location}) => {
   }
 };
 
-
 class App extends Component {
 
-  render() {
+  // checkAuthentication = () => {
+  //   console.log('called!')
+  //   const session_id = auth.getSessionId();
+  //   if (session_id == null) {
+  //     return;
+  //   }
+  //
+  //
+  // }
 
+  render() {
     return (
       <Router history={history}>
         <React.Fragment>

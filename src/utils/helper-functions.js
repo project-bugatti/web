@@ -14,9 +14,9 @@ export function prettyPrintPhone(rawPhoneNumber) {
   }
 }
 
-export function getMembersEndpoint() { return appConfig.api.endpoint + '/members/'; }
-export function getQuotesEndpoint() { return appConfig.api.endpoint + '/quotes/'; }
-export function getSessionEndpoint() { return appConfig.api.endpoint + '/session/' }
+export function getMembersEndpoint() { return appConfig.api.endpoint + 'members/'; }
+export function getQuotesEndpoint() { return appConfig.api.endpoint + 'quotes/'; }
+export function getSessionEndpoint() { return appConfig.api.endpoint + 'session/' }
 export function getMediaEndpoint() { return appConfig.media.endpoint }
 
 export function createNewMember(newMember, callback) {
