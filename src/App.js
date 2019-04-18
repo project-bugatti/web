@@ -25,7 +25,7 @@ const handleAuthentication = ({location}) => {
 class App extends Component {
 
   render() {
-    auth.reinitSession();
+    console.log(auth);
     return (
       <Router history={history}>
         <React.Fragment>

@@ -19,7 +19,7 @@
   },
   "scripts": {
     "prestart": "tailwind build ./src/index.tailwind.css -c ./tailwind-config.js -o ./src/index.css",
-    "start": "react-scripts start",
+    "start": "set HTTPS=true&&react-scripts start",
     "prebuild": "tailwind build ./src/index.tailwind.css -c ./tailwind-config.js -o ./src/index.css",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
