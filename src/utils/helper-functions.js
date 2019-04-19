@@ -15,22 +15,17 @@ export function prettyPrintPhone(rawPhoneNumber) {
   }
 }
 
-export function getMembersEndpoint() { return appConfig.api.endpoint + 'members/'; }
-export function getQuotesEndpoint() { return appConfig.api.endpoint + 'quotes/'; }
-export function getSessionEndpoint() { return appConfig.api.endpoint + 'session/' }
-export function getMediaEndpoint() { return appConfig.media.endpoint }
+export function getMembersEndpoint() {
+  return appConfig.api.endpoint + 'members/';
+}
 
-export function createNewMember(newMember, callback) {
-  const params = {
-    firstname: newMember.firstname,
-    lastname: newMember.lastname,
-    nickname: newMember.nickname,
-    phone: newMember.phone
-  };
+export function getQuotesEndpoint() {
+  return appConfig.api.endpoint + 'quotes/';
 
-  axios.post(getMembersEndpoint(), params)
-    .then( (res) => callback(res))
-    .catch( (err) => callback(err));
+}
+
+export function getMediaEndpoint() {
+  return appConfig.media.endpoint
 }
 
 export function submitNewQuote(newQuote, callback) {

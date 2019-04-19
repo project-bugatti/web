@@ -11,6 +11,7 @@ import Header from "./header/header";
 import Auth from './auth/auth';
 import Guest from "./auth/guest";
 import PrivateRoute from './auth/private-route';
+import Loading from "./utils/loading";
 
 const auth = new Auth();
 
@@ -24,14 +25,12 @@ class App extends Component {
 
   componentDidMount() {
     const { renewSession } = auth;
-
     if (localStorage.getItem('isLoggedIn') === 'true') {
       renewSession();
     }
   }
 
   render() {
-
     return (
       <Router history={history}>
         <React.Fragment>
