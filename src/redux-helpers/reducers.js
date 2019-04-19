@@ -1,6 +1,7 @@
 import {
   LOAD_MEMBERS,
-  SET_MEMBERS_SORT_TYPE
+  SET_MEMBERS_SORT_TYPE,
+  LOAD_ACCESS_TOKEN
 } from './actions';
 
 function reducers(state = {}, action) {
@@ -14,6 +15,11 @@ function reducers(state = {}, action) {
     case SET_MEMBERS_SORT_TYPE:
       return Object.assign({}, state, {
         membersSortType: action.membersSortType
+      });
+
+    case LOAD_ACCESS_TOKEN:
+      return Object.assign({}, state, {
+        accessToken: action.accessToken
       });
 
     default:

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Route, Router, Switch } from 'react-router-dom';
-import { connect } from 'react-redux';
 import Callback from "./callback/callback";
 import history from './utils/history';
 import Media from './media/media';
@@ -16,7 +15,6 @@ import PrivateRoute from './auth/private-route';
 const auth = new Auth();
 
 const handleAuthentication = ({location}) => {
-  console.log('handle auth')
   if (/access_token|id_token|error/.test(location.hash)) {
     auth.handleAuthentication();
   }
@@ -24,8 +22,16 @@ const handleAuthentication = ({location}) => {
 
 class App extends Component {
 
+  componentDidMount() {
+    const { renewSession } = auth;
+
+    if (localStorage.getItem('isLoggedIn') === 'true') {
+      renewSession();
+    }
+  }
+
   render() {
-    console.log(auth);
+
     return (
       <Router history={history}>
         <React.Fragment>
@@ -48,8 +54,4 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  appConfig: state.appConfig
-});
-
-export default connect(mapStateToProps) (App);
+export default App;

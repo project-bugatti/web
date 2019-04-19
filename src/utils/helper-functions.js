@@ -1,5 +1,6 @@
 import axios from 'axios';
 import appConfig from '../app-config';
+import store from '../redux-helpers/store';
 
 export function prettyPrintPhone(rawPhoneNumber) {
   const cleaned = ('' + rawPhoneNumber).replace(/\D/g, '');
@@ -43,11 +44,17 @@ export function submitNewQuote(newQuote, callback) {
     .catch( (err) => callback(err));
 }
 
-export function sendHttp(method, url, data, useApiKey, onSuccess, onFailure) {
+export function sendHttp(method, url, data, useAccessToken, useApiKey, onSuccess, onFailure) {
   let headers = {};
-  if (useApiKey) {
-    headers = {'x-api-key': appConfig.api.key};
+
+  if (useAccessToken) {
+    headers['Authorization'] = 'bearer ' + store.getState().accessToken;
   }
+
+  if (useApiKey) {
+    headers['x-api-key'] = appConfig.api.key;
+  }
+
   axios({
     method,
     url,

@@ -16,7 +16,7 @@ class Members extends Component {
       return;
     }
 
-    sendHttp('GET', getMembersEndpoint(), null, true, (response) => {
+    sendHttp('GET', getMembersEndpoint(), null,false,true, (response) => {
       const members = sortMembers(response.members, MEMBERS_SORT_TYPES.LASTNAME);
       this.saveMembers(members);
     }, (error) => {
@@ -47,8 +47,6 @@ class Members extends Component {
       membersSortType: newSortType
     })
   };
-
-
 
   render() {
     if (!this.props.members) {

@@ -21,7 +21,7 @@ class QuoteForm extends Component {
       return;
     }
 
-    sendHttp('GET', getMembersEndpoint(), null, true, (response) => {
+    sendHttp('GET', getMembersEndpoint(), null, true,true, (response) => {
       const members = sortMembers(response.members, MEMBERS_SORT_TYPES.LASTNAME);
       this.saveMembers(members);
     })
@@ -39,9 +39,8 @@ class QuoteForm extends Component {
       author_member_id: formData.member_id,
       quote_text: formData.quote_text
     };
-    console.log(quote);
 
-    sendHttp('POST', getQuotesEndpoint(), quote, true,
+    sendHttp('POST', getQuotesEndpoint(), quote, true, true,
       () => {
         this.setState({ didSubmit: true });
         callback();
