@@ -18,7 +18,7 @@ class MemberProfile extends Component {
 
   componentDidMount() {
     const memberUrl = getMembersEndpoint() + this.props.match.params.member_id;
-    sendHttp('GET', memberUrl, null, true, true,
+    sendHttp('GET', memberUrl, null,null, true, true,
       response => this.setState({member: response.member }),
       () => console.log('error loading member profile'));
   }

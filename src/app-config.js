@@ -4,8 +4,8 @@ const appConfig = {
     endpoint: "https://api.thegc.cf/dev/",
     key: "iEwnqC4HQL7mEs0zPC7i5lBXkwnrke17HzCBplF8",
   },
-  media: {
-    endpoint: "https://media.thegc.cf/",
+  subdomains: {
+    media: "https://media.thegc.cf/",
   },
   auth0: {
     clientId: "2pi676xhRZHzNhnBvQ9Qhvx1BLE34aFv",

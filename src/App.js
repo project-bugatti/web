@@ -11,7 +11,6 @@ import Header from "./header/header";
 import Auth from './auth/auth';
 import Guest from "./auth/guest";
 import PrivateRoute from './auth/private-route';
-import Loading from "./utils/loading";
 
 const auth = new Auth();
 

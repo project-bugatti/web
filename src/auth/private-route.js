@@ -5,7 +5,8 @@ import { REDIRECT_ROUTE } from '../utils/local-storage-keys'
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
 
-  const isAuthenticated = rest.auth.isAuthenticated();
+  // const isAuthenticated = rest.auth.isAuthenticated();
+  const isAuthenticated = true;
 
   // If not authenticated, save the last route the user tried to access
   if (!isAuthenticated) {

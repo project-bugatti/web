@@ -25,7 +25,11 @@ export function getQuotesEndpoint() {
 }
 
 export function getMediaEndpoint() {
-  return appConfig.media.endpoint
+  return appConfig.api.endpoint + 'media/';
+}
+
+export function getMediaSubdomain() {
+  return appConfig.subdomains.media;
 }
 
 export function submitNewQuote(newQuote, callback) {
@@ -39,7 +43,7 @@ export function submitNewQuote(newQuote, callback) {
     .catch( (err) => callback(err));
 }
 
-export function sendHttp(method, url, data, useAccessToken, useApiKey, onSuccess, onFailure) {
+export function sendHttp(method, url, params, data, useAccessToken, useApiKey, onSuccess, onFailure) {
   let headers = {};
 
   if (useAccessToken) {
@@ -53,6 +57,7 @@ export function sendHttp(method, url, data, useAccessToken, useApiKey, onSuccess
   axios({
     method,
     url,
+    params,
     data,
     headers
   })
