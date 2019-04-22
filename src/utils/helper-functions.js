@@ -43,7 +43,7 @@ export function submitNewQuote(newQuote, callback) {
     .catch( (err) => callback(err));
 }
 
-export function sendHttp(method, url, params, data, useAccessToken, useApiKey, onSuccess, onFailure) {
+export function sendHttp(method, url, data, useAccessToken, useApiKey, onSuccess, onFailure) {
   let headers = {};
 
   if (useAccessToken) {
@@ -57,7 +57,6 @@ export function sendHttp(method, url, params, data, useAccessToken, useApiKey, o
   axios({
     method,
     url,
-    params,
     data,
     headers
   })

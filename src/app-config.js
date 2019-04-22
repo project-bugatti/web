@@ -14,7 +14,8 @@ const appConfig = {
     redirectUri: "https://localhost:3000/callback",
     responseType: "token id_token",
     scope: "openid"
-  }
+  },
+  maxFileSize: 6000000  // six megabytes, maximum size allowed when uploading media
 };
 
 export default appConfig;

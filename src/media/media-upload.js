@@ -1,60 +1,91 @@
 import React, { Component } from 'react';
 import {getMediaEndpoint, sendHttp} from "../utils/helper-functions";
 import { FaCloudUploadAlt } from 'react-icons/fa';
+import axios from 'axios';
+import appConfig from "../app-config";
 
 class MediaUpload extends Component {
 
-  constructor() {
-    super();
-
-    this.state = {
-      fileName: null
-    }
-  }
-
+  /*
+    Returns (early) if file size exceeds configured max size or if file type is not allowed
+    Saves the file added from the form to component state
+   */
   handleChange = (e) => {
-    const path = String.raw`${e.target.value}`; // C:\fakepath\beach.jpeg
-    const splitPath = path.split("\\"); // splits the path at the backslash character
-    // produces: ["C:", "fakepath", "beach.jpeg"]
-    const fileName = splitPath[2];  // "beach.jpeg"
-    this.setState({
-      fileName: fileName
-    })
-  };
+    const file = e.target.files[0];
 
-  handleSubmit = (e) => {
-    e.preventDefault();
-    if (this.state.fileName == null || this.state.fileName.length <= 3) {
+    if (file.size > appConfig.maxFileSize) {
+      console.log("File too large");
       return;
     }
 
-    var fileExtension = this.state.fileName.split(".")[1]; // jpeg
-
-    switch (fileExtension) {
-      case "jpeg":
-        break;
-      case "png":
-        break;
-      case "gif":
-        break;
-      case "jpg":
-        fileExtension = "jpeg";
-        break;
-      default:
-        console.log(`Unsupported file extension: ${fileExtension}`);
+    const TYPE_JPEG = "image/jpeg", TYPE_PNG = "image/png", TYPE_GIF = "image/gif";
+    const allowedTypes = new Set([TYPE_JPEG, TYPE_PNG, TYPE_GIF]);
+    if (!allowedTypes.has(file.type)) {
+      console.log(`Unsupported file extension: ${file.type}`);
+      return;
     }
 
+    this.setState({ file });
+  };
+  /*
+    TODO: Add comment
+   */
+  handleSubmit = async (e) => {
+    e.preventDefault();
+
+    var fileExtension = this.state.file.name.split(".")[1]; // jpeg
+
     const presignedUrlEndpoint = getMediaEndpoint() + 'presigned';
-    const params = {
-      fileExtension
-    };
+    const params = { fileExtension };
+    const headers = { "Content-Type": this.state.file.type };
 
-    sendHttp('GET', presignedUrlEndpoint, params, null,false, false, (response) => {
-      const presignedUrl = response.media.presignedUrl;
+    try {
+      // retrieves a media object consisting of a presigned url and media_id
+      const mediaResponse = await axios.get(presignedUrlEndpoint,{headers, params});
+      let media = mediaResponse.data.media;
 
-    }, (error) => {
-      console.log(error);
+      // add other props to media object
+      media.file_type = fileExtension;
+
+      await this.pushToS3(media.presignedUrl);
+      await this.saveMedia(media);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  /* Given a presigned url, uploads the file saved in state to S3 */
+  pushToS3 = (presignedUrl) => {
+    return new Promise(async (resolve, reject) => {
+      const headers = {"Content-Type": this.state.file.type};
+      try {
+        resolve(await axios.put(presignedUrl, this.state.file, {headers}));
+      } catch (e) {
+        console.log(e);
+        reject(e);
+      }
+    });
+  };
+
+  /* Given a preformed media object, saves a media record in the database */
+  saveMedia = (media) => {
+    return new Promise( async (resolve, reject) => {
+      sendHttp('POST', getMediaEndpoint(), media, false, true,(response) => {
+        resolve(response);
+      }, (error) => {
+        console.log(error);
+        reject(error);
+      });
     })
+  };
+
+  getFileType = () => {
+    if (this.state.file == null) {
+      return null;
+    }
+
+    const splitFileName = this.state.file.name.split(".");
+    return splitFileName[1];
   };
 
   render() {

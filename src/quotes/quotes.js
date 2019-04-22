@@ -74,7 +74,7 @@ class Quotes extends Component {
   }
 
   getQuotes = () => {
-    sendHttp('GET', getQuotesEndpoint(), null,null, false,true, (response) => {
+    sendHttp('GET', getQuotesEndpoint(),null, false,true, (response) => {
       this.setState({quotes: response.quotes});
     }, (error) => {
       console.log(error);
