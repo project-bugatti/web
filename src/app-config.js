@@ -3,6 +3,7 @@ const appConfig = {
   api: {
     endpoint: "https://api.thegc.cf/dev/",
     key: "iEwnqC4HQL7mEs0zPC7i5lBXkwnrke17HzCBplF8",
+    presigned: "presigned"
   },
   subdomains: {
     media: "https://media.thegc.cf/",

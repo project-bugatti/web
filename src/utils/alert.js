@@ -14,7 +14,6 @@ class Alert extends Component {
   }
 
   hideAlert = () => {
-    console.log("HIDE")
     this.setState({ showAlert : false });
   };
 

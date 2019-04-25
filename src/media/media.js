@@ -4,8 +4,7 @@ import MediaUpload from "./media-upload";
 class Media extends Component {
   render() {
     return (
-      <div>
-        <h1>Media page</h1>
+      <div className="flex justify-center">
         <MediaUpload/>
       </div>
     )
