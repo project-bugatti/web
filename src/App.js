@@ -11,6 +11,7 @@ import Header from "./header/header";
 import Auth from './auth/auth';
 import Guest from "./auth/guest";
 import PrivateRoute from './auth/private-route';
+import MediaProfile from "./media/media-profile";
 
 const auth = new Auth();
 
@@ -36,6 +37,7 @@ class App extends Component {
           <Header auth={auth}/>
           <Switch>
             <PrivateRoute exact path="/" component={Media} auth={auth}/>
+            <PrivateRoute path="/media/:media_id" component={MediaProfile} auth={auth}/>
             <PrivateRoute path="/quotes/:quote_id" component={QuoteProfile} auth={auth}/>
             <PrivateRoute exact path="/quotes" component={Quotes} auth={auth}/>
             <PrivateRoute path="/members/:member_id" component={MemberProfile} auth={auth}/>

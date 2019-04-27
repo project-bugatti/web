@@ -4,7 +4,7 @@ import {FaCloudUploadAlt, FaFileUpload, FaUndo} from 'react-icons/fa';
 import axios from 'axios';
 import appConfig from "../app-config";
 import {Field, Formik, Form} from "formik";
-import Alert from "../utils/alert";
+import MediaSuccessAlert from '../alerts/media-success-alert';
 
 const TYPE_JPEG = "image/jpeg";
 const TYPE_PNG = "image/png";
@@ -13,9 +13,12 @@ const TYPE_GIF = "image/gif";
 class MediaUpload extends Component {
 
   state = {
-    // During submission process, where file gets uploaded to S3 and a record is saved in the database, if an error
+    // During submission process, where a file is uploaded to S3 and a record is saved in the database, if an error
     // occurs or the process succeeds, update the status message so an alert displays
-    statusMessage: 'Upload Successful',
+    errorMessage: null,
+    successMessage: null,
+    //
+    link: null,
 
     // On a successful upload, save the media ID to state so it can be passed to an alert component
     uploadedMediaId: null
@@ -40,6 +43,7 @@ class MediaUpload extends Component {
     TODO: Add comment
    */
   handleSubmit = async (values, callback) => {
+    console.log(values);
     var fileExtension = values.file.name.split(".")[1]; // beach_7-4-2015.jpeg => jpeg
 
     const presignedUrlEndpoint = getMediaEndpoint() + appConfig.api.presigned;
@@ -54,13 +58,20 @@ class MediaUpload extends Component {
 
       await this.pushToS3(media.presignedUrl, values.file);
 
-      // add database props to media object
+      // Add database props to media object
       media.file_type = fileExtension;
+      media.title = values.title;
+      media.description = values.description;
       await this.saveMedia(media);
+
+      // Update the state with a success message and link to new media
+      this.setState({
+        successMessage: "Upload successful",
+        link: `/media/${media['media_id']}`
+      });
       callback();
     } catch (error) {
-      console.error(error);
-      this.state.statusMessage = error;
+      this.setState({ errorMessage : "Upload not successful" });
       callback();
     }
   };
@@ -82,8 +93,8 @@ class MediaUpload extends Component {
   saveMedia = (media) => {
     return new Promise( async (resolve, reject) => {
       sendHttp('POST', getMediaEndpoint(), media, false, true,
-          response => {resolve(response);console.log(response)},
-          error => reject(error));
+        response => {resolve(response);console.log(response)},
+        error => reject(error));
     })
   };
 
@@ -111,6 +122,7 @@ class MediaUpload extends Component {
           }}
           onSubmit={(values, actions) => {
             this.handleSubmit(values, () => {
+              actions.resetForm();
               actions.setSubmitting(false);
             })
           }}
@@ -214,8 +226,14 @@ class MediaUpload extends Component {
           }}
         />
 
+        {/* Display an alert if a success or error message exists */}
         {
-          this.state.statusMessage && <Alert alertTitle={this.state.statusMessage} alertSubtext="Click to dismiss" alertLevel={0}/>
+          this.state.successMessage && this.state.link &&
+          <MediaSuccessAlert title={this.state.successMessage} link={this.state.link}/>
+        }
+        {
+          this.state.errorMessage &&
+            <p></p>
         }
 
       </div>

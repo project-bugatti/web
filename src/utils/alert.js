@@ -3,7 +3,7 @@ import {FaExclamationCircle} from "react-icons/fa";
 
 class Alert extends Component {
 
-  alertStyles = "flex m-4 border-t-4 rounded-b px-4 py-3 shadow-md text-left ";
+  alertStyles = "flex m-2 p-4 border-t-4 rounded-b shadow-md text-left ";
   iconStyles = "text-2xl py-1 mr-4 ";
 
   constructor() {
@@ -14,11 +14,11 @@ class Alert extends Component {
   }
 
   hideAlert = () => {
-    this.setState({ showAlert : false });
+    this.setState({showAlert: false});
   };
 
   updateCSS = () => {
-    switch(this.props.alertLevel) {
+    switch (this.props.alertLevel) {
       case 0:
         this.alertStyles += "bg-teal-lightest border-teal text-teal-darkest";
         this.iconStyles += "text-teal";
@@ -38,7 +38,7 @@ class Alert extends Component {
 
     if (this.state.showAlert) {
       return (
-        <button className="w-full" onClick={ () => this.hideAlert()}>
+        <button className="w-full" onClick={() => this.hideAlert()}>
           <div className={this.alertStyles}>
             <div className={this.iconStyles}>
               <FaExclamationCircle/>

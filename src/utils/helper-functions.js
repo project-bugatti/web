@@ -64,6 +64,6 @@ export function sendHttp(method, url, data, useAccessToken, useApiKey, onSuccess
       onSuccess(response.data)
     })
     .catch( error => {
-      onFailure(error)
+      onFailure(error.response.data)
     });
 }

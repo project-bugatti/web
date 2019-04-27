@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import MediaUpload from "./media-upload";
+import Alert from "../utils/alert";
 
 class Media extends Component {
   render() {
